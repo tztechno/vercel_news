@@ -1,6 +1,8 @@
 ```
 http://localhost:3000
 
+http://localhost:3000/api/news
+
 node server.js
 
 git init
