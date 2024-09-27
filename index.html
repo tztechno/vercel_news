@@ -14,7 +14,6 @@
         .new-item {
             font-weight: bold;
             color: red;
-            /* 新規ニュース項目の色 */
         }
 
         #currentTime,
@@ -23,6 +22,11 @@
             margin-top: 10px;
             color: #333;
         }
+
+        #error {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -30,38 +34,40 @@
     <h1>Latest News</h1>
     <div id="currentTime"></div>
     <div id="updateTime"></div>
+    <div id="error"></div>
     <ul id="newsList"></ul>
 
     <script>
-        const apiUrl = 'http://localhost:3000/news';  // バックエンドのAPIエンドポイント
-        let previousNews = [];  // 前回のニュース項目を保存する配列
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? 'https://your-vercel-deployment-url.vercel.app/api/news'
+            : 'http://localhost:3000/api/news';
+        let previousNews = [];
 
         async function fetchNews() {
             try {
                 const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
                 const news = await response.json();
                 const newsList = document.getElementById('newsList');
                 newsList.innerHTML = '';
 
-                // 新しいニュースを表示する
                 news.forEach((newsItem) => {
                     const li = document.createElement('li');
                     li.textContent = newsItem;
-
-                    // 新しいニュース項目には印をつける
                     if (!previousNews.includes(newsItem)) {
-                        li.classList.add('new-item'); // 新規項目にクラスを追加
+                        li.classList.add('new-item');
                     }
-
                     newsList.appendChild(li);
                 });
 
-                // 更新時刻を表示
                 updateUpdateTime();
-                // 現在のニュースを前回のニュースとして保存
                 previousNews = news.slice();
+                document.getElementById('error').textContent = '';
             } catch (error) {
                 console.error('Error fetching news:', error);
+                document.getElementById('error').textContent = 'ニュースの取得に失敗しました。しばらくしてから再試行してください。';
             }
         }
 
@@ -77,13 +83,10 @@
             document.getElementById('updateTime').textContent = `更新時刻: ${formattedTime}`;
         }
 
-        // 初回のニュース取得と現在時刻の表示
         fetchNews();
         updateCurrentTime();
 
-        // 15分ごとにニュースを更新 (900000 ms)
         setInterval(fetchNews, 900000);
-        // 1秒ごとに現在時刻を更新
         setInterval(updateCurrentTime, 1000);
     </script>
 </body>
