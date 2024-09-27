@@ -35,8 +35,7 @@ app.get('/news', async (req, res) => {
 });
 
 // サーバーの起動
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+const apiUrl = process.env.NODE_ENV === 'production'
+    ? 'https://your-vercel-deployment-url.vercel.app/news'
+    : 'http://localhost:3000/news';
 
