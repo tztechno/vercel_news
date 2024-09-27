@@ -1,12 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const cors = require('cors');  // CORSの問題を回避
+const cors = require('cors');
 
 const app = express();
-app.use(cors());  // フロントエンドからのリクエストを許可
+app.use(cors());
 
-// ニュースをスクレイピングする関数
 async function fetchNews() {
     const url = 'https://news.yahoo.co.jp/topics/top-picks';
     try {
@@ -14,9 +13,8 @@ async function fetchNews() {
         const $ = cheerio.load(data);
         const newsItems = [];
 
-        // Yahooニュースのタイトルを取得
         $('div.newsFeed_item_title').each((index, element) => {
-            if (index < 10) {  // 上位10件を取得
+            if (index < 10) {
                 newsItems.push($(element).text());
             }
         });
@@ -28,14 +26,18 @@ async function fetchNews() {
     }
 }
 
-// エンドポイント: /news
-app.get('/news', async (req, res) => {
+app.get('/api/news', async (req, res) => {
     const news = await fetchNews();
-    res.json(news);  // JSONでニュースリストを返す
+    res.json(news);
 });
 
-// サーバーの起動
-const apiUrl = process.env.NODE_ENV === 'production'
-    ? 'https://your-vercel-deployment-url.vercel.app/news'
-    : 'http://localhost:3000/news';
+// ローカル開発用のサーバー起動コード
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
+// Vercel用のエクスポート
+module.exports = app;
