@@ -1,5 +1,5 @@
 {
-  "name": "your-project-name",
+  "name": "vercel_news",
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
