@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,37 +9,30 @@
             font-size: 18px;
             line-height: 1.5;
         }
-
         .new-item {
             font-weight: bold;
             color: red;
         }
-
         #currentTime,
         #updateTime {
             font-size: 16px;
             margin-top: 10px;
             color: #333;
         }
-
         #error {
             color: red;
             font-weight: bold;
         }
     </style>
 </head>
-
 <body>
     <h1>Latest News</h1>
     <div id="currentTime"></div>
     <div id="updateTime"></div>
     <div id="error"></div>
     <ul id="newsList"></ul>
-
     <script>
-        const apiUrl = process.env.NODE_ENV === 'production'
-            ? 'https://your-vercel-deployment-url.vercel.app/api/news'
-            : 'http://localhost:3000/api/news';
+        const apiUrl = '/api/news';
         let previousNews = [];
 
         async function fetchNews() {
@@ -52,7 +44,6 @@
                 const news = await response.json();
                 const newsList = document.getElementById('newsList');
                 newsList.innerHTML = '';
-
                 news.forEach((newsItem) => {
                     const li = document.createElement('li');
                     li.textContent = newsItem;
@@ -61,7 +52,6 @@
                     }
                     newsList.appendChild(li);
                 });
-
                 updateUpdateTime();
                 previousNews = news.slice();
                 document.getElementById('error').textContent = '';
@@ -85,10 +75,8 @@
 
         fetchNews();
         updateCurrentTime();
-
         setInterval(fetchNews, 900000);
         setInterval(updateCurrentTime, 1000);
     </script>
 </body>
-
 </html>
