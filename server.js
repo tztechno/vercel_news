@@ -13,7 +13,10 @@ async function fetchNews() {
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
         const newsItems = [];
-        $('div.newsFeed_item_title').each((index, element) => {
+        
+        //$('div.newsFeed_item_title').each((index, element) => {
+        
+        $('div.sc-3ls169-0 dHAJpi').each((index, element) => {
             if (index < 10) {
                 newsItems.push($(element).text());
             }
