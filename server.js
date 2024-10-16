@@ -12,13 +12,17 @@ async function fetchNews() {
     try {
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
+
+        // rowsを使って特定のクラスを持つ要素を取得
+        const rows = $('div.sc-3ls169-0.dHAJpi');
         const newsItems = [];
         
-        //$('div.newsFeed_item_title').each((index, element) => {
-        
-        $('div.sc-3ls169-0 dHAJpi').each((index, element) => {
-            if (index < 10) {
-                newsItems.push($(element).text());
+        // rows内の個々の要素に対してループを実行
+        rows.each((index, element) => {
+            // もしrowsからさらに特定のデータを抽出したい場合
+            const title = $(element).find('div.newsFeed_item_title').text();
+            if (title && index < 10) {
+                newsItems.push(title);
             }
         });
         return newsItems;
@@ -27,6 +31,7 @@ async function fetchNews() {
         return [];
     }
 }
+
 
 // APIエンドポイントを /news から /api/news に変更
 app.get('/api/news', async (req, res) => {
